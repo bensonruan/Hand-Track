@@ -1,0 +1,76 @@
+html, body{
+    height: 100%;
+    overflow-y: hidden;
+}
+
+#hand-app {
+    background-image: url(../images/hand-fire-bg.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+}
+
+#app-panel{
+    background-color: black;
+}
+
+@media screen and (max-width: 1024px) {
+    #hand-app {
+        background-image: url(../images/hand-fire-mobile-bg.jpg);
+    }
+}
+.webcam-container{
+    background: black;
+}
+
+#webcam {
+    height: 100vh;
+}
+
+#canvas{
+    background-color: transparent;
+    position: relative;
+    height: 100vh;
+    z-index: 99999;
+    margin: auto;
+}
+
+.loading{
+    position: fixed;
+    top: 35%;
+    left: 42%;
+    z-index:300000;
+    border: white 1px;
+    color: white;
+    padding: 75px 30px;
+    font-size: 22px;
+}
+
+.spinner-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    color: white;
+    z-index:300000;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+    opacity: 0.8;   
+  }
+
+@media screen and (max-width: 757px) {
+    .loading{
+        position: fixed;
+        left: 30%;
+        padding: 55px 15px;
+        font-size: large;
+    }
+    .spinner-border{
+        width: 150px;
+        height: 150px;
+    }
+}

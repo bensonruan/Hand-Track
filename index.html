@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Magic Fire In Your Hand</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel='stylesheet' type='text/css' media='screen' href='style/webcam.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='style/hand-track.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='style/fire.css'>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
+    <script src='js/webcam.js'></script>
+</head>
+<body>
+    <main id="hand-app">
+        <div class="form-control webcam-start" id="webcam-control">
+                <label class="form-switch">
+                <input type="checkbox" id="webcam-switch">
+                <i></i> 
+                <span id="webcam-caption">Click to Start Camera</span>
+                </label>                        
+        </div>
+        <div class="fire"></div>
+        <div id="errorMsg" class="col-12 col-md-6 alert-danger d-none">
+            Fail to start camera, please allow permision to access camera. <br/>
+            If you are browsing through social media built in browsers, you would need to open the page in Sarafi (iPhone)/ Chrome (Android)
+        </div>
+        <div class="md-modal md-effect-12">
+            <div id="app-panel" class="app-panel md-content row p-0 m-0">     
+                <div id="webcam-container" class="webcam-container col-12 d-none p-0 m-0">
+                    <video id="webcam" autoplay playsinline width="640" height="480"></video>
+                    <div id="canvas" width="640" height="480"></div>
+                    <div class="loading d-none">
+                        Loading Model
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+        <div class="md-overlay"></div>
+    </main>'
+    <script src='js/hand-track.js'></script>
+</body>
+</html>
