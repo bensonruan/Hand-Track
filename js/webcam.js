@@ -8,28 +8,42 @@ class Webcam {
       this.webcamElement.width = this.webcamElement.width || 640;
       this.webcamElement.height = this.webcamElement.height || video.width * (3 / 4);
       this.facingMode = facingMode;
+      this.webcams = [];
     }
-  
+    
+    flipCamera(){
+      if(this.facingMode == 'user') {
+        this.facingMode = 'enviroment';
+      }
+      else {
+        this.facingMode = 'user';
+      }
+    }
 
     getMediaConstraints(mediaDevices) {
-        var deviceIds = [];
-        var selectedDevice = '';
+        this.webcams = [];
+        var selectedDevice = null;
         mediaDevices.forEach(mediaDevice => {
           if (mediaDevice.kind === 'videoinput') {
-            deviceIds.push(mediaDevice.deviceId);
+            this.webcams.push(mediaDevice);
           }
-        });      
-        if(deviceIds.length > 0){
-            selectedDevice = deviceIds[0];
-        }else {
+        });    
+        if (this.webcams.length > 1){
+          selectedDevice = null;  
+        }
+        else if (this.webcams.length == 1){
+          selectedDevice = this.webcams[0];
+          this.facingMode = 'user';
+        }
+        else {
             return null;
         }
 
         var videoConstraints = {};
-        if (selectedDevice === '') {
+        if (selectedDevice == null) {
             videoConstraints.facingMode = this.facingMode;
         } else {
-            videoConstraints.deviceId = { exact: selectedDevice};
+            videoConstraints.deviceId = { exact: selectedDevice.deviceId};
         }
         var constraints = {
             video: videoConstraints,
@@ -64,7 +78,7 @@ class Webcam {
                         this.currentStream = stream;
                         this.webcamElement.srcObject = stream;
                         this.webcamElement.play();
-                        resolve();
+                        resolve([this.webcams.length, this.facingMode]);
                     })
                     .catch(error => {
                         reject(error);

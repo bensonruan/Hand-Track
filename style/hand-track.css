@@ -1,7 +1,4 @@
-html, body{
-    height: 100%;
-    overflow-y: hidden;
-}
+
 
 #hand-app {
     background-image: url(../images/hand-fire-bg.jpg);
@@ -9,8 +6,7 @@ html, body{
     background-repeat: no-repeat;
     background-size: cover;
     background-color: black;
-    width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 
 #app-panel{
@@ -20,6 +16,8 @@ html, body{
 @media screen and (max-width: 1024px) {
     #hand-app {
         background-image: url(../images/hand-fire-mobile-bg.jpg);
+        width: 100vw;
+        height: 100vh;
     }
 }
 .webcam-container{
@@ -62,7 +60,16 @@ html, body{
     opacity: 0.8;   
   }
 
+.fire {
+    position: absolute;
+    top: 20%;
+    left: 38%;
+}
+
 @media screen and (max-width: 757px) {
+    .fire {
+        left: 10%;
+    }
     .loading{
         position: fixed;
         left: 30%;
@@ -74,3 +81,4 @@ html, body{
         height: 150px;
     }
 }
+

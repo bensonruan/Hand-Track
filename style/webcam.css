@@ -146,10 +146,13 @@
     width: auto;
     height: auto;
     z-index: 9999;
+    pointer-events: none;
+  }
+
+  .webcam-mirror {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
-    pointer-events: none;
   }
 
   .md-modal {
@@ -249,3 +252,17 @@
         z-index: 999999;
     }
  }
+
+ #cameraFlip {
+  width: 70px;
+    height: 55px;
+    margin-left: 30px;
+    margin-top: -10px;
+    position: absolute;
+    cursor: pointer;
+    background-color: black;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(../images/camera_flip_white.png);
+    background-size: cover;
+}

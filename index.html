@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel='stylesheet' type='text/css' media='screen' href='style/webcam.css'>
     <link rel='stylesheet' type='text/css' media='screen' href='style/hand-track.css'>
-    <link rel='stylesheet' type='text/css' media='screen' href='style/fire.css'>
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"> </script>
     <script src='js/webcam.js'></script>
@@ -20,9 +19,11 @@
                 <input type="checkbox" id="webcam-switch">
                 <i></i> 
                 <span id="webcam-caption">Click to Start Camera</span>
-                </label>                        
+                </label>      
+                <button id="cameraFlip" class="btn d-none"></button>                  
         </div>
-        <div class="fire"></div>
+        <div class="fire"><img src="images/fire.gif"></div>
+        
         <div id="errorMsg" class="col-12 col-md-6 alert-danger d-none">
             Fail to start camera, please allow permision to access camera. <br/>
             If you are browsing through social media built in browsers, you would need to open the page in Sarafi (iPhone)/ Chrome (Android)
@@ -42,7 +43,7 @@
             </div>        
         </div>
         <div class="md-overlay"></div>
-    </main>'
+    </main>
     <script src='js/hand-track.js'></script>
 </body>
 </html>

@@ -1,22 +1,25 @@
 const webcamElement = document.getElementById('webcam');
-const webcam = new Webcam(webcamElement, 'environment');
 const canvasElement = document.getElementById('canvas');
+const fireGifUrl = 'images/fire.gif';
+const fireSizeWidth = 300;
+const fireSizeHeight = 300;
+const fireAboveHand = 50;
 let model = null;
 let cameraFrame = null;
 let handCount = 0;
 let fireElements = [];
+let facingMode = 'enviroment';
+let webcamCount = 0;
+const webcam = new Webcam(webcamElement, facingMode);
 
-$( document ).ready(function() {
-    for(let j=0; j<50; j++){
-        $("<div class='particle'></div>").appendTo($(".fire"));
-    }
-});
 
 $("#webcam-switch").change(function () {
     if(this.checked){
         $('.md-modal').addClass('md-show');
         webcam.start()
-            .then(res => {
+            .then(webcamInfo => {
+                webcamCount = webcamInfo[0];
+                facingMode = webcamInfo[1];
                 cameraStarted();
                 loadModel().then(res => {
                     cameraFrame = startDetection();
@@ -36,18 +39,33 @@ $("#webcam-switch").change(function () {
     }        
 });
 
+$('#cameraFlip').click(function() {
+    facingMode = webcam.flipCamera();
+    if(cameraFrame!= null){
+        cancelAnimationFrame(cameraFrame);
+    }
+    webcam.start()
+        .then(webcamCount => {
+            cameraFrame = startDetection();
+        })
+        .catch(err => {
+            $("#errorMsg").removeClass("d-none")
+        });
+});
+
 
 async function loadModel() {
     $(".loading").removeClass('d-none');
+    var flipWebcam = (facingMode =='user') ? true: false
     return new Promise((resolve, reject) => {
         const modelParams = {
-            flipHorizontal: true,   // flip e.g for video  
+            flipHorizontal: flipWebcam,   // flip e.g for video  
             maxNumBoxes: 20,        // maximum number of boxes to detect
             iouThreshold: 0.5,      // ioU threshold for non-max suppression
             scoreThreshold: 0.6,    // confidence threshold for predictions.
         }
 
-        handTrack.load(modelParams).then(mdl => {
+        handTrack.load(modelParams).then(mdl => { 
             model = mdl;
             $(".loading").addClass('d-none');
             resolve();
@@ -84,7 +102,7 @@ function showFire(predictions){
             fireElements.push(fireElement);
             fireElement.appendTo($("#canvas"));
         }
-        fireElement.css({top: hand_center_point[0] -120, left: hand_center_point[1], position:'absolute'});
+        fireElement.css({top: hand_center_point[0]-fireSizeHeight/2 - fireAboveHand, left: hand_center_point[1] - fireSizeWidth/2, position:'absolute'});
     }
 }
 
@@ -100,11 +118,7 @@ function getHandCenterPoint(bbox){
 }
 
 function createFire(handNum){
-    var fireElement = "<div class='fire_in_hand' id='fire_"+handNum+"'>";
-    for(let j=0; j<50; j++){
-        fireElement = fireElement + "<div class='particle'></div>";
-    }
-    fireElement = fireElement + "</div>";
+    var fireElement = "<div class='fire_in_hand'><img src='"+fireGifUrl+"'></div>";
     return $(fireElement);
 }
 
@@ -117,8 +131,17 @@ function cameraStarted(){
     var ratioWebCamWidth = webcamElement.scrollHeight * (webcamElement.width/webcamElement.height);
     var webCamFullWidth = webcamElement.scrollWidth;
     $("#canvas").css({width: ((ratioWebCamWidth < webCamFullWidth) ? ratioWebCamWidth : webCamFullWidth)});
+    if( webcamCount > 1){
+        $("#cameraFlip").removeClass('d-none');
+    }
+    if(facingMode == 'user'){
+        $("#webcam").addClass("webcam-mirror");
+    }
+    else{
+        $("#webcam").removeClass("webcam-mirror");
+    }
     $("#wpfront-scroll-top-container").addClass("d-none");
-    //window.scrollTo(0, 0); 
+    window.scrollTo(0, 0); 
     $('body').css('overflow-y','hidden');
 }
 
@@ -129,7 +152,7 @@ function cameraStopped(){
     $("#cameraFlip").addClass('d-none');
     $(".webcam-container").addClass("d-none");
     $("#webcam-caption").html("Click to Start Camera");
-    //$('body').css('overflow-y','scroll');
+    $('body').css('overflow-y','scroll');
     $([document.documentElement, document.body]).animate({
         scrollTop: ($("#hand-app").offset().top - 80)
     }, 1000);
