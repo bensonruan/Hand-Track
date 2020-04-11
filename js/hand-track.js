@@ -1,9 +1,5 @@
 const webcamElement = document.getElementById('webcam');
 const canvasElement = document.getElementById('canvas');
-const fireGifUrl = 'images/fire.gif';
-const fireSizeWidth = 300;
-const fireSizeHeight = 300;
-const fireAboveHand = 50;
 let model = null;
 let cameraFrame = null;
 let handCount = 0;
@@ -16,43 +12,44 @@ const webcam = new Webcam(webcamElement, facingMode);
 $("#webcam-switch").change(function () {
     if(this.checked){
         $('.md-modal').addClass('md-show');
-        webcam.start()
-            .then(webcamInfo => {
-                webcamCount = webcamInfo[0];
-                facingMode = webcamInfo[1];
-                cameraStarted();
-                loadModel().then(res => {
-                    cameraFrame = startDetection();
-                })
-            })
-            .catch(err => {
-                $("#errorMsg").removeClass("d-none")
-            });
+        startHandMagic();
     }
     else {        
         $("#errorMsg").addClass("d-none");
-        cameraStopped();
-        webcam.stop();
-        if(cameraFrame!= null){
-            cancelAnimationFrame(cameraFrame);
-        }
+        stopHandMafic();
     }        
 });
 
 $('#cameraFlip').click(function() {
-    facingMode = webcam.flipCamera();
+    webcam.flipCamera();
     if(cameraFrame!= null){
         cancelAnimationFrame(cameraFrame);
     }
-    webcam.start()
-        .then(webcamCount => {
-            cameraFrame = startDetection();
-        })
-        .catch(err => {
-            $("#errorMsg").removeClass("d-none")
-        });
+    startHandMagic();
 });
 
+function startHandMagic(){
+    webcam.start()
+    .then(webcamInfo => {
+        webcamCount = webcamInfo[0];
+        facingMode = webcamInfo[1];
+        cameraStarted();
+        loadModel().then(res => {
+            cameraFrame = startDetection();
+        })
+    })
+    .catch(err => {
+        $("#errorMsg").removeClass("d-none")
+    });
+}
+
+function stopHandMafic(){
+    cameraStopped();
+    webcam.stop();
+    if(cameraFrame!= null){
+        cancelAnimationFrame(cameraFrame);
+    }
+}
 
 async function loadModel() {
     $(".loading").removeClass('d-none');
@@ -98,11 +95,15 @@ function showFire(predictions){
         if (fireElements.length > i) { 
             fireElement = fireElements[i];
         }else{
-            fireElement = createFire(i);
+            fireElement = $("<div class='fire_in_hand'></div>");
             fireElements.push(fireElement);
             fireElement.appendTo($("#canvas"));
         }
-        fireElement.css({top: hand_center_point[0]-fireSizeHeight/2 - fireAboveHand, left: hand_center_point[1] - fireSizeWidth/2, position:'absolute'});
+        var fireSizeWidth = fireElement.css("width").replace("px","");
+        var fireSizeHeight = fireElement.css("height").replace("px","");
+        var firePositionTop = hand_center_point[0]- fireSizeHeight * 3/4;
+        var firePositionLeft = hand_center_point[1] - fireSizeWidth/2;
+        fireElement.css({top: firePositionTop, left: firePositionLeft, position:'absolute'});
     }
 }
 
@@ -117,10 +118,11 @@ function getHandCenterPoint(bbox){
     return [hand_center_top, hand_center_left];
 }
 
-function createFire(handNum){
-    var fireElement = "<div class='fire_in_hand'><img src='"+fireGifUrl+"'></div>";
-    return $(fireElement);
-}
+$(window).resize(function() {
+    var ratioWebCamWidth = webcamElement.scrollHeight * (webcamElement.width/webcamElement.height);
+    var webCamFullWidth = webcamElement.scrollWidth > screen.width? screen.width: webcamElement.scrollWidth;
+    $("#canvas").css({width: ((ratioWebCamWidth < webCamFullWidth) ? ratioWebCamWidth : webCamFullWidth)});
+});
 
 function cameraStarted(){
     $("#errorMsg").addClass("d-none");

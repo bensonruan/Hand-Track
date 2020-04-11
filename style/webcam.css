@@ -138,15 +138,12 @@
 
   #webcam{
     display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    min-height: 100%;
+    position: relative;
     width: auto;
     height: auto;
     z-index: 9999;
     pointer-events: none;
+    margin: auto;
   }
 
   .webcam-mirror {
