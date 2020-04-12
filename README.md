@@ -3,7 +3,7 @@ Hand tracking from webcam in browser using javascript library handtrack.js
 
 Streaming webcam on desktop computer or mobile, there is function to switch back or front cameras on mobile 
 
-![magicfire](https://bensonruan.com/wp-content/uploads/2020/04/magic-fire-in-hand.gif)
+![fire](https://bensonruan.com/wp-content/uploads/2020/04/magic-fire-in-hand-2.gif)
 
 ## Live Demo
 **[https://bensonruan.com/magic-fire-in-your-hand-with-handtrack-js](https://bensonruan.com/magic-fire-in-your-hand-with-handtrack-js)**
