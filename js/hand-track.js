@@ -1,49 +1,59 @@
 const webcamElement = document.getElementById('webcam');
 const canvasElement = document.getElementById('canvas');
+const webcam = new Webcam(webcamElement, 'enviroment');
 let model = null;
 let cameraFrame = null;
 let handCount = 0;
 let fireElements = [];
-let facingMode = 'enviroment';
-let webcamCount = 0;
-const webcam = new Webcam(webcamElement, facingMode);
-
+//let dots = [];
 
 $("#webcam-switch").change(function () {
     if(this.checked){
         $('.md-modal').addClass('md-show');
-        startHandMagic();
+        webcam.setup()
+            .then(result =>{
+                startHandMagic();
+            })
+            .catch(err => {
+                displayError();
+            });
     }
     else {        
         $("#errorMsg").addClass("d-none");
-        stopHandMafic();
+        stopHandMagic();
     }        
 });
 
 $('#cameraFlip').click(function() {
-    webcam.flipCamera();
     if(cameraFrame!= null){
         cancelAnimationFrame(cameraFrame);
     }
+    webcam.flip();
     startHandMagic();
+    
+});
+
+$('#closeError').click(function() {
+    $("#webcam-switch").prop('checked', false).change();
 });
 
 function startHandMagic(){
     webcam.start()
-    .then(webcamInfo => {
-        webcamCount = webcamInfo[0];
-        facingMode = webcamInfo[1];
-        cameraStarted();
-        loadModel().then(res => {
-            cameraFrame = startDetection();
+        .then(result => {
+            cameraStarted();
+            loadModel().then(res => {
+                cameraFrame = startDetection();
+            })
+            .catch(err => {
+                displayError('Fail to load hand tracking model, please refresh the page to try again');
+            });
         })
-    })
-    .catch(err => {
-        $("#errorMsg").removeClass("d-none")
-    });
+        .catch(err => {
+            displayError();
+        });
 }
 
-function stopHandMafic(){
+function stopHandMagic(){
     cameraStopped();
     webcam.stop();
     if(cameraFrame!= null){
@@ -51,9 +61,16 @@ function stopHandMafic(){
     }
 }
 
+function displayError(err = ''){
+    if(err!=''){
+        $("#errorMsg").html(err);
+    }
+    $("#errorMsg").removeClass("d-none");
+}
+
 async function loadModel() {
     $(".loading").removeClass('d-none');
-    var flipWebcam = (facingMode =='user') ? true: false
+    var flipWebcam = (webcam.facingMode =='user') ? true: false
     return new Promise((resolve, reject) => {
         const modelParams = {
             flipHorizontal: flipWebcam,   // flip e.g for video  
@@ -67,8 +84,6 @@ async function loadModel() {
             $(".loading").addClass('d-none');
             resolve();
         }).catch(err => {
-            $("#errorMsg").html('Fail to load hand track model.');
-            $("#errorMsg").removeClass("d-none");
             reject(error);
         });
     });
@@ -86,12 +101,23 @@ function showFire(predictions){
     if(handCount != predictions.length){
         $("#canvas").empty();
         fireElements = [];
+        //dots = [];
     }   
     handCount = predictions.length;
 
     for (let i = 0; i < predictions.length; i++) {
         //bbox: [x, y, width, height]
         var hand_center_point = getHandCenterPoint(predictions[i].bbox);
+        //if(dots.length > i){
+            //dot = dots[i];
+        //}
+        //else{
+            //dot = $("<div class='dot'></div>");
+            //dots.push(dot);
+            //dot.appendTo($("#canvas"));
+        //}
+        //dot.css({top:hand_center_point[0], left:hand_center_point[1], position:'absolute'});
+
         if (fireElements.length > i) { 
             fireElement = fireElements[i];
         }else{
@@ -101,7 +127,7 @@ function showFire(predictions){
         }
         var fireSizeWidth = fireElement.css("width").replace("px","");
         var fireSizeHeight = fireElement.css("height").replace("px","");
-        var firePositionTop = hand_center_point[0]- fireSizeHeight * 3/4;
+        var firePositionTop = hand_center_point[0]- fireSizeHeight;
         var firePositionLeft = hand_center_point[1] - fireSizeWidth/2;
         fireElement.css({top: firePositionTop, left: firePositionLeft, position:'absolute'});
     }
@@ -109,19 +135,24 @@ function showFire(predictions){
 
 function getHandCenterPoint(bbox){
     var ratio = canvasElement.clientHeight/webcamElement.height;
+    if(webcam.webcamList.length ==1 || window.innerWidth/window.innerHeight >= webcamElement.width/webcamElement.height){
+        var leftAdjustment = 0;
+    }else{
+        var leftAdjustment = ((webcamElement.width/webcamElement.height) * canvasElement.clientHeight - window.innerWidth)/2 
+    }
     var x = bbox[0];
     var y = bbox[1];
     var w = bbox[2];
     var h = bbox[3];
-    var hand_center_left = x*ratio + (w*ratio/2);
+    var hand_center_left = x*ratio + (w*ratio/2) - leftAdjustment;
     var hand_center_top = y*ratio + (h*ratio/2);
     return [hand_center_top, hand_center_left];
 }
 
 $(window).resize(function() {
     var ratioWebCamWidth = webcamElement.scrollHeight * (webcamElement.width/webcamElement.height);
-    var webCamFullWidth = webcamElement.scrollWidth > screen.width? screen.width: webcamElement.scrollWidth;
-    $("#canvas").css({width: ((ratioWebCamWidth < webCamFullWidth) ? ratioWebCamWidth : webCamFullWidth)});
+    var canvasWidth = (ratioWebCamWidth < window.innerWidth) ? ratioWebCamWidth : window.innerWidth;
+    $("#canvas").css({width: canvasWidth});
 });
 
 function cameraStarted(){
@@ -133,10 +164,10 @@ function cameraStarted(){
     var ratioWebCamWidth = webcamElement.scrollHeight * (webcamElement.width/webcamElement.height);
     var webCamFullWidth = webcamElement.scrollWidth;
     $("#canvas").css({width: ((ratioWebCamWidth < webCamFullWidth) ? ratioWebCamWidth : webCamFullWidth)});
-    if( webcamCount > 1){
+    if( webcam.webcamList.length > 1){
         $("#cameraFlip").removeClass('d-none');
     }
-    if(facingMode == 'user'){
+    if(webcam.facingMode == 'user'){
         $("#webcam").addClass("webcam-mirror");
     }
     else{
