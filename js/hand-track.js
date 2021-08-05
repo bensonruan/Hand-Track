@@ -74,9 +74,15 @@ async function loadModel() {
     return new Promise((resolve, reject) => {
         const modelParams = {
             flipHorizontal: flipWebcam,   // flip e.g for video  
-            maxNumBoxes: 20,        // maximum number of boxes to detect
-            iouThreshold: 0.5,      // ioU threshold for non-max suppression
-            scoreThreshold: 0.8,    // confidence threshold for predictions.
+            outputStride: 16,
+            imageScaleFactor: 1,
+            maxNumBoxes: 20,
+            iouThreshold: 0.2,
+            scoreThreshold: 0.6,
+            modelType: "ssd640fpnlite",
+            modelSize: "small",
+            bboxLineWidth: "2",
+            fontSize: 17,
         }
 
         handTrack.load(modelParams).then(mdl => { 
