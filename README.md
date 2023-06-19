@@ -30,3 +30,6 @@ Please note that on iOS Safari, cameras can only be accessed via the https proto
 ## Library
 * [jquery](https://code.jquery.com/jquery-3.3.1.min.js) - JQuery
 * [handtrack.js](https://github.com/victordibia/handtrack.js) - JavaScript library for hand tracking in the browser
+
+## Support me 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W6METMY)
