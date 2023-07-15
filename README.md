@@ -6,7 +6,7 @@ Streaming webcam on desktop computer or mobile, there is function to switch back
 ## Live Demo
 **[https://bensonruan.com/hand-tracking-javascript-hand-fire-magic/](https://bensonruan.com/hand-tracking-javascript-hand-fire-magic/)**
 
-![fire](https://bensonruan.com/wp-content/uploads/2020/04/magic-fire-in-hand-2.gif)
+![fire](https://bensonruan.com/wp-content/webp-express/webp-images/uploads/2020/04/magic-fire-in-hand-2.webp)
 
 
 ## Installing
